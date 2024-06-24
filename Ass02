@@ -1,0 +1,222 @@
+# import random
+
+# # Given item details
+# items = [
+#     {"name": "A", "weight": 2200, "value": 15},
+#     {"name": "B", "weight": 400, "value": 18},
+#     {"name": "C", "weight": 250, "value": 9},
+#     {"name": "D", "weight": 370, "value": 12},
+#     {"name": "E", "weight": 90, "value": 5},
+# ]
+
+# # Knapsack weight constraint (2 kg = 2000 grams)
+# knapsack_capacity = 2000
+
+# # GA parameters
+# population_size = 6
+# num_generations = 3
+# mutation_rate = 0.1
+
+# def initialize_population():
+#     return [random.choices([0, 1], k=len(items)) for _ in range(population_size)]
+
+# def evaluate_fitness(solution):
+#     total_value = sum(item["value"] for i, item in enumerate(items) if solution[i])
+#     total_weight = sum(item["weight"] for i, item in enumerate(items) if solution[i])
+#     excess_weight = max(0, total_weight - knapsack_capacity)
+#     return total_value - excess_weight
+
+# def crossover(parent1, parent2):
+#     # One-point crossover
+#     crossover_point = random.randint(1, len(items) - 1)
+#     child1 = parent1[:crossover_point] + parent2[crossover_point:]
+#     child2 = parent2[:crossover_point] + parent1[crossover_point:]
+#     return child1, child2
+
+# def mutate(solution):
+#     # Flip a random gene with a certain probability
+#     for i in range(len(solution)):
+#         if random.random() < mutation_rate:
+#             solution[i] = 1 - solution[i]
+#     return solution
+
+# def main():
+#     population = initialize_population()
+
+#     for generation in range(num_generations):
+#         population.sort(key=evaluate_fitness, reverse=True)
+#         print(f"Generation {generation + 1}: Best fitness = {evaluate_fitness(population[0])}")
+
+#         new_population = []
+#         for _ in range(population_size // 2):
+#             parent1, parent2 = random.choices(population, k=2)
+#             child1, child2 = crossover(parent1, parent2)
+#             child1 = mutate(child1)
+#             child2 = mutate(child2)
+#             new_population.extend([child1, child2])
+
+#         population = new_population
+
+#     best_solution = population[0]
+#     selected_items = [item["name"] for i, item in enumerate(items) if best_solution[i]]
+#     print(f"Selected items: {', '.join(selected_items)}")
+
+# if __name__ == "__main__":
+#     main()
+
+
+
+
+# import random
+
+# # Define the items
+# items = [
+#     {"name": "A", "weight": 2200, "value": 15},
+#     {"name": "B", "weight": 400, "value": 18},
+#     {"name": "C", "weight": 250, "value": 9},
+#     {"name": "D", "weight": 370, "value": 12},
+#     {"name": "E", "weight": 90, "value": 5}
+# ]
+
+# # Knapsack capacity
+# knapsack_capacity = 2000  # grams
+
+# # Genetic Algorithm parameters
+# population_size = 6
+# generations = 3
+# mutation_rate = 0.1
+
+# def fitness(chromosome):
+#     total_value = 0
+#     total_weight = 0
+#     for i in range(len(chromosome)):
+#         if chromosome[i] == 1:
+#             total_value += items[i]["value"]
+#             total_weight += items[i]["weight"]
+#     if total_weight > knapsack_capacity:
+#         return 0  # Penalize solutions that exceed the capacity
+#     else:
+#         return total_value
+
+# def crossover(parent1, parent2):
+#     crossover_point = random.randint(1, len(parent1) - 1)
+#     child1 = parent1[:crossover_point] + parent2[crossover_point:]
+#     child2 = parent2[:crossover_point] + parent1[crossover_point:]
+#     return child1, child2
+
+# def mutate(chromosome):
+#     mutated_chromosome = list(chromosome)
+#     for i in range(len(mutated_chromosome)):
+#         if random.random() < mutation_rate:
+#             mutated_chromosome[i] = 1 - mutated_chromosome[i]  # Flip the bit
+#     return mutated_chromosome
+
+# # Initialize population
+# population = []
+# for _ in range(population_size):
+#     chromosome = [random.randint(0, 1) for _ in range(len(items))]
+#     population.append(chromosome)
+
+# # Main loop for generations
+# for generation in range(generations):
+#     print("Generation", generation + 1)
+    
+#     # Evaluate fitness of each individual
+#     fitness_scores = [fitness(chromosome) for chromosome in population]
+    
+#     # Select parents for crossover
+#     selected_parents = []
+#     while len(selected_parents) < population_size:
+#         tournament_size = 2
+#         candidates = random.sample(list(enumerate(fitness_scores)), tournament_size)
+#         selected_parent_index = max(candidates, key=lambda x: x[1])[0]
+#         selected_parents.append(population[selected_parent_index])
+    
+#     # Perform crossover and mutation to create offspring
+#     offspring = []
+#     for i in range(0, len(selected_parents), 2):
+#         parent1, parent2 = selected_parents[i], selected_parents[i+1]
+#         child1, child2 = crossover(parent1, parent2)
+#         child1 = mutate(child1)
+#         child2 = mutate(child2)
+#         offspring.extend([child1, child2])
+    
+#     # Replace old generation with offspring
+#     population = offspring
+    
+#     # Print best solution of current generation
+#     best_solution_index = fitness_scores.index(max(fitness_scores))
+#     print("Best Solution:", population[best_solution_index], "Fitness:", max(fitness_scores))
+
+import random
+
+# Define the items
+items = [
+    {"name": "A", "weight": 2200, "value": 15},
+    {"name": "B", "weight": 400, "value": 18},
+    {"name": "C", "weight": 250, "value": 9},
+    {"name": "D", "weight": 370, "value": 12},
+    {"name": "E", "weight": 90, "value": 5}
+]
+
+# Knapsack capacity
+knapsack_capacity = 2000  # grams
+
+# Genetic Algorithm parameters
+population_size = 6
+generations = 3
+mutation_rate = 0.1
+
+def evaluate_fitness(solution):
+    total_weight = sum(item["weight"] if bit else 0 for bit, item in zip(solution, items))
+    total_value = sum(item["value"] if bit else 0 for bit, item in zip(solution, items))
+
+    if total_weight > knapsack_capacity:
+        return 0  # This solution is not feasible
+    else:
+        return total_value
+
+# Define the initialization function
+def initialize_population():
+    return [[random.randint(0, 1) for _ in range(len(items))] for _ in range(population_size)]
+
+# Define the crossover function
+def crossover(parent1, parent2):
+    crossover_point = random.randint(1, len(parent1) - 1)
+    child1 = parent1[:crossover_point] + parent2[crossover_point:]
+    child2 = parent2[:crossover_point] + parent1[crossover_point:]
+    return child1, child2
+
+# Define the mutation function
+def mutate(solution):
+    # Flip a random gene with a certain probability
+    for i in range(len(solution)):
+        if random.random() < mutation_rate:
+            solution[i] = 1 - solution[i]
+    return solution
+
+# Define the main function
+def main():
+    population = initialize_population()
+
+    for generation in range(generations):
+        population.sort(key=evaluate_fitness, reverse=True)
+        print(f"Generation {generation + 1}: Best fitness = {evaluate_fitness(population[0])}")
+
+        new_population = []
+        for _ in range(population_size // 2):
+            parent1, parent2 = random.choices(population, k=2)
+            child1, child2 = crossover(parent1, parent2)
+            child1 = mutate(child1)
+            child2 = mutate(child2)
+            new_population.extend([child1, child2])
+
+        population = new_population
+
+    best_solution = population[0]
+    selected_items = [item["name"] for i, item in enumerate(items) if best_solution[i]]
+    print(f"Selected items: {', '.join(selected_items)}")
+
+# Run the main function
+if __name__ == "__main__":
+    main()
